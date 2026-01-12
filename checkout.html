@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout | Veggie's</title>
+  css/style.css
+</head>
+<body data-page="checkout">
+  <header class="header">
+    <div class="container header__wrap">
+      <div class="logo">Veggie's</div>
+      <nav class="nav">
+        index.htmlHome</a>
+        shop.htmlShop Now</a>
+        shop.html#categoriesCategories</a>
+        cart.html
+          <span>Cart</span>
+          <span class="cart-count" id="navCartCount">0</span>
+        </a>
+        index.html#contactContact</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container checkout">
+      <h2>Checkout</h2>
+      <div class="checkout__grid">
+        <form id="checkoutForm" class="checkout__form">
+          <label>
+            Name
+            <input type="text" id="custName" required />
+          </label>
+          <label>
+            Address
+            <input type="text" id="custAddress" required />
+          </label>
+          <label>
+            Phone
+            <input type="tel" id="custPhone" required />
+          </label>
+          <button type="submit" class="btn btn-primary">Place Order</button>
+        </form>
+
+        <div class="checkout__summary">
+          <h3>Order Summary</h3>
+          <div id="orderSummary"><!-- Rendered by JS --></div>
+          <div class="total">Total: ₹<span id="orderTotal">0</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">© <span id="year"></span> Veggie's. All rights reserved.</div>
+  </footer>
+
+  js/analytics.js</script>
+  js/script.js</script>
+</body>
+</html>

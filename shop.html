@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop | Veggie's</title>
+  css/style.css
+</head>
+<body data-page="shop">
+  <header class="header">
+    <div class="container header__wrap">
+      <div class="logo">Veggie's</div>
+      <nav class="nav">
+        index.htmlHome</a>
+        shop.htmlShop Now</a>
+        #categoriesCategories</a>
+        <a href="
+          <span>Cart</span>
+          <span class="cart-count" id="navCartCount">0</span>
+        </a>
+        index.html#contactContact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Filters & Search -->
+  <section class="section filters">
+    <div class="container">
+      <div class="filters__row">
+        <input type="text" id="searchInput" placeholder="Search products (e.g., apples, milk)" />
+        <div class="price-filter">
+          <label for="priceRange">Max Price: ₹<span id="maxPriceLabel">1000</span></label>
+          <input type="range" id="priceRange" min="0" max="1000" value="1000" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section class="section" id="categories">
+    <div class="container">
+      <h2>Shop by Category</h2>
+      <div class="categories__grid">
+        <button class="cat-card" data-category="All">All</button>
+        <button class="cat-card" data-category="Fruits">Fruits</button>
+        <button class="cat-card" data-category="Vegetables">Vegetables</button>
+        <button class="cat-card" data-category="Dairy">Dairy</button>
+        <button class="cat-card" data-category="Snacks">Snacks</button>
+        <button class="cat-card" data-category="Grains">Grains</button>
+        <button class="cat-card" data-category="Beverages">Beverages</button>
+        <button class="cat-card" data-category="Household">Household</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Grid -->
+  <section class="section">
+    <div class="container">
+      <div class="grid" id="shopGrid"><!-- Rendered by JS --></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">© <span id="year"></span> Veggie's. All rights reserved.</div>
+  </footer>
+
+  js/analytics.js</script>
+  js/script.js</script>
+</body>
+</html>
+``
