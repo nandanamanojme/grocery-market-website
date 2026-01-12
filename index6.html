@@ -1,0 +1,622 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    Veggie's — Single-file Grocery Market Website (Buttons version)
+    - All nav items are real <button> elements (not links)
+    - No GA4 / GTM / Adobe libraries
+    - Simple dataLayer provided for future analytics
+    - Responsive, beginner-friendly, clean UI
+  -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Veggie's | Grocery Market (Buttons)</title>
+
+  <!-- ============ INLINE CSS ============ -->
+  <style>
+    :root{
+      --green:#2e7d32;      /* primary */
+      --light:#f5fff4;      /* hero bg */
+      --muted:#6b7280;      /* text-muted */
+      --bg:#ffffff;         /* card/header bg */
+      --border:#e5e7eb;     /* borders */
+      --accent:#10b981;     /* cart badge */
+      --dark:#111;          /* dark btn */
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:#fafafa;color:#111}
+    img{max-width:100%;display:block}
+    .container{max-width:1080px;margin:0 auto;padding:0 16px}
+
+    /* Header / Navbar */
+    .header{position:sticky;top:0;background:var(--bg);box-shadow:0 2px 8px rgba(0,0,0,.06);z-index:10}
+    .header__wrap{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+    .logo{font-weight:800;color:var(--green);font-size:20px}
+    .nav{display:flex;gap:10px;align-items:center}
+    .btn-nav{
+      padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:#fff;color:#111;cursor:pointer;
+    }
+    .btn-nav:hover{background:#f0fdf4;color:var(--green)}
+    .btn-nav.active{background:#f0fdf4;color:var(--green);border-color:#b7f3d2}
+    .cart-badge{display:inline-flex;align-items:center;gap:8px}
+    .cart-count{background:var(--accent);color:#fff;font-weight:700;border-radius:999px;padding:2px 8px}
+
+    /* Generic sections */
+    .section{padding:28px 0}
+    .section h2{font-size:24px;margin:0 0 16px}
+
+    /* Hero */
+    .hero{background:var(--light);padding:36px 0}
+    .hero__wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center}
+    .hero h1{font-size:32px;margin:0 0 8px}
+    .hero p{color:var(--muted);margin:0 0 16px}
+    .hero .cta-row{display:flex;gap:12px;flex-wrap:wrap}
+
+    /* Grid for products */
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;box-shadow:0 4px 10px rgba(0,0,0,.04);display:flex;flex-direction:column}
+    .card h3{font-size:18px;margin:8px 0}
+    .card .price{font-weight:700;color:var(--green)}
+    .card .qty-row{display:flex;gap:8px;align-items:center;margin:10px 0}
+    .card .qty-row input{width:72px;padding:6px;border:1px solid var(--border);border-radius:6px}
+    .card .actions{display:flex;gap:8px}
+
+    /* Buttons */
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border:none;border-radius:8px;cursor:pointer;text-decoration:none}
+    .btn-primary{background:var(--green);color:#fff}
+    .btn-primary:hover{filter:brightness(1.05)}
+    .btn-secondary{background:var(--dark);color:#fff}
+    .btn-secondary:hover{filter:brightness(1.1)}
+    .btn-ghost{background:#f0fdf4;color:var(--green);border:1px solid #d1fae5}
+
+    /* Filters */
+    .filters__row{display:flex;gap:12px;align-items:center}
+    .filters input[type='text']{flex:1;padding:10px;border:1px solid var(--border);border-radius:8px}
+    .price-filter input[type='range']{width:220px}
+
+    /* Category cards */
+    .categories__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .cat-card{padding:12px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer}
+    .cat-card:hover{background:#f0fdf4;color:var(--green)}
+
+    /* Cart page */
+    .cart-item{display:grid;grid-template-columns:80px 1fr auto;gap:12px;padding:12px;border:1px solid var(--border);border-radius:10px;background:#fff;margin-bottom:10px}
+    .cart-item img{width:80px;height:80px;object-fit:cover;border-radius:8px}
+    .cart-item h4{margin:0}
+    .cart-summary{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
+    .cart-item .qty-controls{display:flex;gap:6px;align-items:center;margin-top:6px}
+    .cart-item .remove{color:#ef4444;background:#fee2e2;padding:6px 10px;border-radius:6px;cursor:pointer}
+
+    /* Checkout */
+    .checkout__grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .checkout__form label{display:block;margin-bottom:10px}
+    .checkout__form input{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px}
+    .checkout__summary{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px}
+
+    /* Footer */
+    .footer{background:#fff;border-top:1px solid var(--border);padding:16px 0;margin-top:20px;color:var(--muted);text-align:center}
+
+    /* Hide sections helper */
+    .hidden{display:none}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .grid{grid-template-columns:repeat(2,1fr)}
+      .hero__wrap{grid-template-columns:1fr}
+      .categories__grid{grid-template-columns:repeat(3,1fr)}
+    }
+    @media (max-width:600px){
+      .grid{grid-template-columns:1fr}
+      .categories__grid{grid-template-columns:repeat(2,1fr)}
+      .nav{gap:6px}
+      .btn-nav{padding:6px 8px}
+    }
+  </style>
+</head>
+
+<body data-page="home">
+  <!-- Header & Navigation -->
+  <header class="header">
+    <div class="container header__wrap">
+      <div class="logo">Veggie's</div>
+      <nav class="nav" aria-label="Main navigation">
+        <button class="btn-nav active" data-route="home" aria-label="Go to Home">Home</button>
+        <button class="btn-nav" data-route="shop" aria-label="Go to Shop">Shop Now</button>
+        <button class="btn-nav" data-route="shop" data-scroll="categories" aria-label="Browse Categories">Categories</button>
+        <span class="cart-badge">
+          <button class="btn-nav" data-route="cart" aria-label="Open Cart">Cart</button>
+          <span class="cart-count" id="navCartCount">0</span>
+        </span>
+        <button class="btn-nav" data-route="home" data-scroll="contact" aria-label="Contact Us">Contact</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============ HOME SECTION ============ -->
+  <main id="home" class="home">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container hero__wrap">
+        <div class="hero__text">
+          <h1>Veggie's groceries delivered at your door</h1>
+          <p>Fresh fruits, vegetables, dairy, snacks &amp; more — delivered fast.</p>
+          <div class="cta-row">
+            <button class="btn btn-primary" data-route="shop" aria-label="Shop Now">Shop Now</button>
+            <button class="btn btn-secondary" data-route="shop" data-scroll="categories" aria-label="Browse Categories">Browse Categories</button>
+            <button class="btn btn-ghost" data-route="home" data-scroll="contact" aria-label="Contact Us">Contact Us</button>
+          </div>
+        </div>
+        <div class="hero__image">
+          <!-- Online placeholder banner -->
+          https://placehold.co/1200x400/DCF5DC/228B22?text=Veggie%27s+Banner
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="section" id="featured">
+      <div class="container">
+        <h2>Featured Products</h2>
+        <div class="grid" id="featuredGrid"><!-- Rendered by JS --></div>
+      </div>
+    </section>
+
+    <!-- Contact (on Home for simple anchor scroll) -->
+    <section class="section" id="contact">
+      <div class="container">
+        <h2>Contact</h2>
+        <p>Email: support@veggies.example | Phone: +91-90000-00000</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ SHOP (SHOP + CATEGORIES) ============ -->
+  <section id="shop" class="section hidden" aria-label="Shop Section">
+    <!-- Filters & Search -->
+    <div class="container filters">
+      <div class="filters__row">
+        <input type="text" id="searchInput" placeholder="Search products (e.g., apples, milk)" aria-label="Search products" />
+        <div class="price-filter">
+          <label for="priceRange">Max Price: ₹<span id="maxPriceLabel">1000</span></label>
+          <input type="range" id="priceRange" min="0" max="1000" value="1000" aria-label="Max price" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="container" id="categories">
+      <h2>Shop by Category</h2>
+      <div class="categories__grid">
+        <button class="cat-card" data-category="All">All</button>
+        <button class="cat-card" data-category="Fruits">Fruits</button>
+        <button class="cat-card" data-category="Vegetables">Vegetables</button>
+        <button class="cat-card" data-category="Dairy">Dairy</button>
+        <button class="cat-card" data-category="Snacks">Snacks</button>
+        <button class="cat-card" data-category="Grains">Grains</button>
+        <button class="cat-card" data-category="Beverages">Beverages</button>
+        <button class="cat-card" data-category="Household">Household</button>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="container">
+      <div class="grid" id="shopGrid"><!-- Rendered by JS --></div>
+    </div>
+  </section>
+
+  <!-- ============ CART ============ -->
+  <section id="cart" class="section hidden" aria-label="Cart Section">
+    <div class="container">
+      <h2>Your Cart</h2>
+      <div id="cartItems"><!-- Rendered by JS --></div>
+      <div class="cart-summary">
+        <div class="total">Total: ₹<span id="cartTotal">0</span></div>
+        <div class="actions">
+          <button class="btn btn-secondary" data-route="shop" aria-label="Continue Shopping">Continue Shopping</button>
+          <button class="btn btn-primary" data-route="checkout" id="checkoutBtn" aria-label="Checkout">Checkout</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CHECKOUT ============ -->
+  <section id="checkout" class="section hidden" aria-label="Checkout Section">
+    <div class="container checkout">
+      <h2>Checkout</h2>
+      <div class="checkout__grid">
+        <form id="checkoutForm" class="checkout__form">
+          <label>
+            Name
+            <input type="text" id="custName" required />
+          </label>
+          <label>
+            Address
+            <input type="text" id="custAddress" required />
+          </label>
+          <label>
+            Phone
+            <input type="tel" id="custPhone" required />
+          </label>
+          <button type="submit" class="btn btn-primary">Place Order</button>
+        </form>
+
+        <div class="checkout__summary">
+          <h3>Order Summary</h3>
+          <div id="orderSummary"><!-- Rendered by JS --></div>
+          <div class="total">Total: ₹<span id="orderTotal">0</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">© <span id="year"></span> Veggie's. All rights reserved.</div>
+  </footer>
+
+  <!-- ============ INLINE JS ============ -->
+  <script>
+    // ======================================
+    // Simple dataLayer for future analytics
+    // No GA4/GTM/Adobe libraries included now.
+    // ======================================
+    window.dataLayer = window.dataLayer || [];
+    const DL_DEBUG = new URLSearchParams(window.location.search).get('dl_debug') === '1';
+    const __origPush = window.dataLayer.push.bind(window.dataLayer);
+    window.dataLayer.push = function(obj){
+      if(DL_DEBUG){
+        console.group('%cdataLayer.push', 'color:#2e7d32;font-weight:bold;');
+        console.log(obj);
+        console.groupEnd();
+      }
+      return __origPush(obj);
+    };
+    function dataLayerPush(eventName, params = {}){
+      window.dataLayer.push({
+        event: eventName,
+        page: document.body.getAttribute('data-page') || '',
+        timestamp: new Date().toISOString(),
+        ...params
+      });
+    }
+  </script>
+
+  <script>
+    // =============================
+    // Veggie's Grocery Market JS
+    // Single-file SPA (buttons + hash-based)
+    // =============================
+
+    // ----- Data & Storage -----
+    const CART_KEY = 'veggies_cart';
+
+    const PRODUCTS = [
+      // Fruits
+      {id:1, name:'Apples', category:'Fruits', price:120, image:'https://placehold.co/600x400?text=Apples'},
+      {id:2, name:'Bananas', category:'Fruits', price:60, image:'https://placehold.co/600x400?text=Bananas'},
+      {id:3, name:'Oranges', category:'Fruits', price:90, image:'https://placehold.co/600x400?text=Oranges'},
+      {id:4, name:'Grapes', category:'Fruits', price:150, image:'https://placehold.co/600x400?text=Grapes'},
+      // Vegetables
+      {id:5, name:'Tomatoes', category:'Vegetables', price:50, image:'https://placehold.co/600x400?text=Tomatoes'},
+      {id:6, name:'Potatoes', category:'Vegetables', price:40, image:'https://placehold.co/600x400?text=Potatoes'},
+      {id:7, name:'Carrots', category:'Vegetables', price:45, image:'https://placehold.co/600x400?text=Carrots'},
+      {id:8, name:'Spinach', category:'Vegetables', price:35, image:'https://placehold.co/600x400?text=Spinach'},
+      // Dairy
+      {id:9, name:'Milk (1L)', category:'Dairy', price:70, image:'https://placehold.co/600x400?text=Milk'},
+      {id:10, name:'Curd (500g)', category:'Dairy', price:55, image:'https://placehold.co/600x400?text=Curd'},
+      {id:11, name:'Cheese (200g)', category:'Dairy', price:180, image:'https://placehold.co/600x400?text=Cheese'},
+      {id:12, name:'Butter (100g)', category:'Dairy', price:80, image:'https://placehold.co/600x400?text=Butter'},
+      // Snacks
+      {id:13, name:'Chips', category:'Snacks', price:30, image:'https://placehold.co/600x400?text=Chips'},
+      {id:14, name:'Biscuits', category:'Snacks', price:25, image:'https://placehold.co/600x400?text=Biscuits'},
+      {id:15, name:'Chocolate', category:'Snacks', price:90, image:'https://placehold.co/600x400?text=Chocolate'},
+      {id:16, name:'Namkeen', category:'Snacks', price:60, image:'https://placehold.co/600x400?text=Namkeen'},
+      // Grains
+      {id:17, name:'Rice (1kg)', category:'Grains', price:80, image:'https://placehold.co/600x400?text=Rice'},
+      {id:18, name:'Wheat Flour (1kg)', category:'Grains', price:60, image:'https://placehold.co/600x400?text=Wheat+Flour'},
+      {id:19, name:'Pulses (1kg)', category:'Grains', price:120, image:'https://placehold.co/600x400?text=Pulses'},
+      {id:20, name:'Oats (500g)', category:'Grains', price:95, image:'https://placehold.co/600x400?text=Oats'},
+      // Beverages
+      {id:21, name:'Tea', category:'Beverages', price:110, image:'https://placehold.co/600x400?text=Tea'},
+      {id:22, name:'Coffee', category:'Beverages', price:180, image:'https://placehold.co/600x400?text=Coffee'},
+      {id:23, name:'Juice', category:'Beverages', price:90, image:'https://placehold.co/600x400?text=Juice'},
+      {id:24, name:'Soft Drink', category:'Beverages', price:40, image:'https://placehold.co/600x400?text=Soft+Drink'},
+      // Household
+      {id:25, name:'Detergent', category:'Household', price:220, image:'https://placehold.co/600x400?text=Detergent'},
+      {id:26, name:'Dish Soap', category:'Household', price:95, image:'https://placehold.co/600x400?text=Dish+Soap'},
+      {id:27, name:'Toilet Cleaner', category:'Household', price:150, image:'https://placehold.co/600x400?text=Toilet+Cleaner'},
+      {id:28, name:'Paper Towels', category:'Household', price:85, image:'https://placehold.co/600x400?text=Paper+Towels'}
+    ];
+
+    function getCart(){
+      try{ return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+      catch(e){ return []; }
+    }
+    function saveCart(cart){ localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+
+    function updateNavCartCount(){
+      const countEl = document.getElementById('navCartCount');
+      if(!countEl) return;
+      const cart = getCart();
+      const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+      countEl.textContent = totalQty;
+    }
+
+    function addToCart(productId, qty){
+      const product = PRODUCTS.find(p => p.id === productId);
+      if(!product) return;
+      const cart = getCart();
+      const existing = cart.find(item => item.id === productId);
+      if(existing){ existing.qty += qty; }
+      else{ cart.push({ id:product.id, name:product.name, price:product.price, image:product.image, qty }); }
+      saveCart(cart);
+      updateNavCartCount();
+      dataLayerPush('add_to_cart', { product_id: product.id, product_name: product.name, qty, price: product.price });
+      alert(`${product.name} added to cart!`);
+    }
+
+    function buyNow(productId, qty){
+      const product = PRODUCTS.find(p => p.id === productId);
+      if(!product) return;
+      sessionStorage.setItem('veggies_buy_now', JSON.stringify({ id:product.id, name:product.name, price:product.price, image:product.image, qty }));
+      dataLayerPush('begin_checkout', { type:'buy_now', product_id: product.id, product_name: product.name, qty, price: product.price });
+      navigateTo('checkout');
+    }
+
+    // ----- Rendering -----
+    function cardHTML(p){
+      return `
+        <div class="card">
+          ${p.image}
+          <h3>${p.name}</h3>
+          <div class="price">₹${p.price}</div>
+          <div class="qty-row">
+            <label for="qty_${p.id}">Qty</label>
+            <input type="number" min="1" value="1" id="qty_${p.id}" />
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" onclick="addToCart(${p.id}, parseInt(document.getElementById('qty_${p.id}').value)||1)">Add to Cart</button>
+            <button class="btn btn-secondary" onclick="buyNow(${p.id}, parseInt(document.getElementById('qty_${p.id}').value)||1)">Buy Now</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderFeatured(){
+      const grid = document.getElementById('featuredGrid');
+      if(!grid) return;
+      const featured = PRODUCTS.slice(0, 8);
+      grid.innerHTML = featured.map(p => cardHTML(p)).join('');
+    }
+
+    function renderShopGrid(filter = {}){
+      const grid = document.getElementById('shopGrid');
+      if(!grid) return;
+      let list = [...PRODUCTS];
+      if(filter.category && filter.category !== 'All'){
+        list = list.filter(p => p.category === filter.category);
+      }
+      if(filter.search){
+        const q = filter.search.toLowerCase();
+        list = list.filter(p => p.name.toLowerCase().includes(q));
+      }
+      if(typeof filter.maxPrice === 'number'){
+        list = list.filter(p => p.price <= filter.maxPrice);
+      }
+      grid.innerHTML = list.map(p => cardHTML(p)).join('');
+      dataLayerPush('view_item_list', { category: filter.category || 'All', count: list.length, search: filter.search || '', maxPrice: filter.maxPrice || null });
+    }
+
+    function renderCart(){
+      const wrap = document.getElementById('cartItems');
+      if(!wrap) return;
+      const cart = getCart();
+      if(cart.length === 0){
+        wrap.innerHTML = '<p>Your cart is empty.</p>';
+        const ct = document.getElementById('cartTotal'); if(ct) ct.textContent = '0';
+        return;
+      }
+      wrap.innerHTML = cart.map(item => `
+        <div class="cart-item">
+          ${item.image}
+          <div>
+            <h4>${item.name}</h4>
+            <div>₹${item.price} x ${item.qty} = ₹${item.price * item.qty}</div>
+            <div class="qty-controls">
+              <button class="btn" onclick="changeQty(${item.id}, -1)">-</button>
+              <button class="btn" onclick="changeQty(${item.id}, +1)">+</button>
+              <span class="remove" onclick="removeItem(${item.id})">Remove</span>
+            </div>
+          </div>
+          <div></div>
+        </div>
+      `).join('');
+      updateTotals();
+    }
+
+    function changeQty(id, delta){
+      const cart = getCart();
+      const it = cart.find(i => i.id === id);
+      if(!it) return;
+      it.qty = Math.max(1, it.qty + delta);
+      saveCart(cart);
+      renderCart();
+      updateNavCartCount();
+    }
+
+    function removeItem(id){
+      let cart = getCart();
+      const it = cart.find(i => i.id === id);
+      cart = cart.filter(i => i.id !== id);
+      saveCart(cart);
+      renderCart();
+      updateNavCartCount();
+      dataLayerPush('remove_from_cart', { product_id: it?.id, product_name: it?.name });
+    }
+
+    function updateTotals(){
+      const cart = getCart();
+      const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+      const el = document.getElementById('cartTotal');
+      if(el) el.textContent = total;
+    }
+
+    function renderOrderSummary(){
+      const wrap = document.getElementById('orderSummary');
+      if(!wrap) return;
+      const buyNowItem = JSON.parse(sessionStorage.getItem('veggies_buy_now') || 'null');
+      let items = getCart();
+      if(buyNowItem){ items = [buyNowItem]; }
+      if(items.length === 0){
+        wrap.innerHTML = '<p>No items to checkout.</p>';
+        const ot = document.getElementById('orderTotal'); if(ot) ot.textContent = '0';
+        return;
+      }
+      wrap.innerHTML = items.map(i => `<div>${i.name} - ₹${i.price} x ${i.qty} = ₹${i.price * i.qty}</div>`).join('');
+      const total = items.reduce((sum, i) => sum + i.price * i.qty, 0);
+      const ot = document.getElementById('orderTotal'); if(ot) ot.textContent = total;
+    }
+
+    function handleCheckout(){
+      const form = document.getElementById('checkoutForm');
+      if(!form) return;
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        const name = document.getElementById('custName').value.trim();
+        const address = document.getElementById('custAddress').value.trim();
+        const phone = document.getElementById('custPhone').value.trim();
+        const total = document.getElementById('orderTotal').textContent;
+
+        dataLayerPush('purchase', { name, address, phone, total });
+        alert('Order placed successfully!');
+        localStorage.removeItem(CART_KEY);
+        sessionStorage.removeItem('veggies_buy_now');
+        updateNavCartCount();
+        navigateTo('home');
+      });
+    }
+
+    // ----- Simple Router (hash-based) -----
+    function navigateTo(section, options = {}){
+      // Hide all main sections
+      const ids = ['home','shop','cart','checkout'];
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if(el){ el.classList.add('hidden'); }
+      });
+
+      // Show target
+      const target = document.getElementById(section);
+      if(target){ target.classList.remove('hidden'); }
+
+      // Update body page attr for dataLayer
+      document.body.setAttribute('data-page', section);
+
+      // Update active nav button
+      document.querySelectorAll('.btn-nav').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll(`.btn-nav[data-route="${section}"]`).forEach(b => b.classList.add('active'));
+
+      // Hash
+      if(location.hash !== `#${section}`){ history.replaceState(null, '', `#${section}`); }
+
+      // Section-specific rendering
+      if(section === 'home'){ renderFeatured(); }
+      if(section === 'shop'){
+        setupShopFiltersIfNeeded();
+        // Optional scroll to categories
+        if(options.scroll === 'categories'){
+          const cat = document.getElementById('categories');
+          if(cat){ setTimeout(()=>cat.scrollIntoView({behavior:'smooth'}), 100); }
+        }
+      }
+      if(section === 'cart'){ renderCart(); }
+      if(section === 'checkout'){ renderOrderSummary(); handleCheckout(); }
+
+      dataLayerPush('page_view', { page: section });
+    }
+
+    function setupShopFiltersIfNeeded(){
+      if(setupShopFiltersIfNeeded._done) return;
+      setupShopFiltersIfNeeded._done = true;
+
+      const searchInput = document.getElementById('searchInput');
+      const priceRange = document.getElementById('priceRange');
+      const maxLabel = document.getElementById('maxPriceLabel');
+      const catButtons = document.querySelectorAll('.cat-card');
+      const currentFilter = { category:'All', search:'', maxPrice:1000 };
+
+      // Initial render
+      renderShopGrid(currentFilter);
+
+      searchInput.addEventListener('input', () => {
+        currentFilter.search = searchInput.value;
+        renderShopGrid(currentFilter);
+      });
+      priceRange.addEventListener('input', () => {
+        currentFilter.maxPrice = parseInt(priceRange.value);
+        maxLabel.textContent = priceRange.value;
+        renderShopGrid(currentFilter);
+      });
+      catButtons.forEach(btn => btn.addEventListener('click', () => {
+        currentFilter.category = btn.dataset.category;
+        renderShopGrid(currentFilter);
+      }));
+    }
+
+    // ----- Init -----
+    function init(){
+      // Year in footer
+      const y = document.getElementById('year');
+      if(y) y.textContent = new Date().getFullYear();
+
+      updateNavCartCount();
+      renderFeatured();
+
+      // Make ALL buttons navigate (header + hero + cart actions)
+      document.querySelectorAll('button[data-route]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const route = btn.dataset.route || 'home';
+          const scrollTarget = btn.dataset.scroll;
+          // Special scroll targets
+          if(route === 'home' && scrollTarget === 'contact'){
+            navigateTo('home');
+            const el = document.getElementById('contact');
+            if(el){ setTimeout(()=>el.scrollIntoView({behavior:'smooth'}), 100); }
+            return;
+          }
+          if(route === 'shop' && scrollTarget === 'categories'){
+            navigateTo('shop', {scroll:'categories'});
+            return;
+          }
+          navigateTo(route);
+        });
+      });
+
+      // Checkout button analytics from cart
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      if(checkoutBtn){
+        checkoutBtn.addEventListener('click', ()=>{
+          dataLayerPush('begin_checkout', { source:'cart' });
+        });
+      }
+
+      // Router on load
+      const initialHash = (location.hash || '#home').replace('#','');
+      navigateTo(['home','shop','cart','checkout'].includes(initialHash) ? initialHash : 'home');
+    }
+
+    // Expose functions for product card buttons
+    window.addToCart = addToCart;
+    window.buyNow = buyNow;
+    window.changeQty = changeQty;
+    window.removeItem = removeItem;
+
+    // DOM ready
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', init);
+    }else{ init(); }
+  </script>
+</body>
+</html>
+
